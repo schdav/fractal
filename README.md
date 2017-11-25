@@ -1,5 +1,5 @@
 # fractal
-My first steps with ruby...
+My first steps with Ruby...
 ## Requirements
 [ChunkyPNG](https://github.com/wvanbergen/chunky_png) by Willem van Bergen
 ## Output

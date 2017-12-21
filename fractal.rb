@@ -23,9 +23,8 @@ class Fractal
         part_re = pos_x / WIDTH.to_f * 3 - 2.0 # -2 ... 1
         part_im = pos_y / HEIGHT.to_f * 2 - 1 # -1 ... 1
 
-        if is_element(part_re, part_im)
-          @file[pos_x, pos_y] = ChunkyPNG::Color.rgba(0, 0, 0, 255) # black
-        end
+        alpha = calculate_color(part_re, part_im)
+        @file[pos_x, pos_y] = ChunkyPNG::Color.rgba(0, 0, 0, alpha)
 
         pos_x += 1
       end
@@ -35,10 +34,11 @@ class Fractal
     end
   end
 
-  def is_element(part_re, part_im)
+  def calculate_color(part_re, part_im)
     i = 0
     x = 0
     y = 0
+    alpha = 255
 
     while i < ITERATIONS
       xn = x * x - y * y + part_re
@@ -46,11 +46,17 @@ class Fractal
       x = xn
       y = yn
 
-      return false if x * x + y * y > 4
+      return alpha if x * x + y * y > 4
 
       i += 1
+
+      if alpha > 5
+        alpha -= 10
+      elsif alpha == 5
+        alpha -= 5
+      end
     end
-    true
+    255
   end
 end
 

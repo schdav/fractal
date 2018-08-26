@@ -1,29 +1,24 @@
 require 'chunky_png'
 
 class Fractal
-  WIDTH = 800
-  HEIGHT = 600
-  FILENAME = 'fractal.png'.freeze
-  ITERATIONS = 600
-
-  def initialize
-    @file = ChunkyPNG::Image.new(WIDTH, HEIGHT, ChunkyPNG::Color::WHITE)
-    print "Calculating...\n"
-    draw
-    @file.save(FILENAME, interlace: true)
-    print 'Created ' + FILENAME + "\n"
+  def initialize(width, height)
+    @width = width
+    @height = height
+    @file = ChunkyPNG::Image.new(@width, @height, ChunkyPNG::Color::WHITE)
   end
 
-  def draw
+  def draw(iterations)
     pos_x = 0
     pos_y = 0
 
-    while pos_y < HEIGHT
-      while pos_x < WIDTH
-        part_re = pos_x / WIDTH.to_f * 3 - 2.0 # -2 ... 1
-        part_im = pos_y / HEIGHT.to_f * 2 - 1 # -1 ... 1
+    print "Calculating...\n"
 
-        alpha = calculate_color(part_re, part_im)
+    while pos_y < @height
+      while pos_x < @width
+        part_re = pos_x / @width.to_f * 3 - 2.0 # -2 ... 1
+        part_im = pos_y / @height.to_f * 2 - 1 # -1 ... 1
+
+        alpha = calculate_color(part_re, part_im, iterations)
         @file[pos_x, pos_y] = ChunkyPNG::Color.rgba(0, 0, 0, alpha)
 
         pos_x += 1
@@ -34,13 +29,20 @@ class Fractal
     end
   end
 
-  def calculate_color(part_re, part_im)
+  def save(filename)
+    @file.save(filename, interlace: true)
+    print 'Created ' + filename + "\n"
+  end
+
+  private
+
+  def calculate_color(part_re, part_im, iterations)
     i = 0
     x = 0
     y = 0
     alpha = 255
 
-    while i < ITERATIONS
+    while i < iterations
       xn = x * x - y * y + part_re
       yn = 2 * x * y + part_im
       x = xn
@@ -60,4 +62,6 @@ class Fractal
   end
 end
 
-Fractal.new
+fractal = Fractal.new(800, 600)
+fractal.draw(600)
+fractal.save('fractal.png')
